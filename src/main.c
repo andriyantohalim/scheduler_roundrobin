@@ -51,22 +51,21 @@ int main()
 {
 	printf("Hello world\n");
 
-
-	scheduler_initialize(&RoundRobin, 5);
-
 	process_initialize(&P0, 0, 5, &PROCESS_0);
 	process_initialize(&P1, 3, 7, &PROCESS_1);
-	process_initialize(&P2, 6, 4, &PROCESS_0);
+	process_initialize(&P2, 6, 4, &PROCESS_2);
+
+	scheduler_initialize(&RoundRobin, 5);
 
 	scheduler_register_process(&RoundRobin, &P0);
 	scheduler_register_process(&RoundRobin, &P1);
 	scheduler_register_process(&RoundRobin, &P2);
 
-
-
-
-
+	// calculate total time. you can think of this as one period
 	scheduler_calculate_total_time(&RoundRobin);
+
+	// create another function to translate all the timings data from the process and map into scheduler tick.
+	// working with scheduler tick is easier
 
 	printf("Round robin total time : %d\n", RoundRobin.total_time);
 	printf("Round robin total process : %d\n", RoundRobin.no_of_process);
@@ -74,27 +73,23 @@ int main()
 
 
 
-//	while(1) //ignore this
-//	{
-//
-//		// Time Quantum emulation
-//		for(unsigned int i = 0; i < ((1 << 16) - 1); i ++)
-//		{
+	while(1) //ignore this. just used for repeating
+	{
+		// Time Quantum emulation. In MCU, this is the while(1) loop
+		for(unsigned int i = 0; i < ((1 << 16) - 1); i ++)
+		{
+			// execute process. Function should be placed here.
 //			RoundRobin.process[RoundRobin.curr_process]->process_function();
-//			printf("Current Process index:  %d\n", RoundRobin.curr_process);
-//
-//		}
-//
-//
-//		RoundRobin.tick ++;
-//
-//		if(RoundRobin.tick >= RoundRobin.time_quantum)
-//		{
-//			RoundRobin.tick = 0;
-//
-//			TimerISR();
-//		}
-//	}
+
+		}
+
+		// execute process
+		RoundRobin.process[RoundRobin.curr_process]->process_function();
+//		printf("Current Process index:  %d\n\n", RoundRobin.curr_process);
+
+		// Call Timer Interrupt after some time
+		TimerISR();
+	}
 
 
 
@@ -104,15 +99,29 @@ int main()
 
 void TimerISR(void)
 {
-	printf("Hello world from Timer ISR EMULATION\n");
-
 	RoundRobin.tick ++;
+	RoundRobin.process[RoundRobin.curr_process]->tick ++;
+
+	// check scheduler current tick against arrival time
+
+	//
+
+
 
 	if(RoundRobin.tick >= RoundRobin.time_quantum)
 	{
 		RoundRobin.tick = 0;
 
 		// manage unfinished processes
+
+		RoundRobin.curr_process ++;
+
+		if(RoundRobin.curr_process >= RoundRobin.no_of_process)
+		{
+			RoundRobin.curr_process = 0;
+		}
+
+
 	}
 	else
 	{
@@ -120,12 +129,7 @@ void TimerISR(void)
 	}
 
 
-	RoundRobin.curr_process ++;
 
-	if(RoundRobin.curr_process >= RoundRobin.no_of_process)
-	{
-		RoundRobin.curr_process = 0;
-	}
 
 }
 
