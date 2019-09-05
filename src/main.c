@@ -57,8 +57,8 @@ int main()
 	printf("Hello world\n");
 
 	process_initialize(&P0, 0, 3, &PROCESS_0);
-	process_initialize(&P1, 2, 2, &PROCESS_1);
-	process_initialize(&P2, 2, 2, &PROCESS_2);
+	process_initialize(&P1, 0, 8, &PROCESS_1);
+	process_initialize(&P2, 0, 4, &PROCESS_2);
 
 	scheduler_initialize(&RR, 5);
 
@@ -104,58 +104,41 @@ int main()
 void TimerISR(void)
 {
 	RR.scheduler_tick ++; // increase scheduler tick at every timer ISR
-	printf("Scheduler tick : %d\t", RR.scheduler_tick);
+	printf("Scheduler tick : %d\t", RR.scheduler_tick - 1);
 
-	if(RR.scheduler_tick < RR.total_time)
+	if(RR.scheduler_tick < RR.total_time) // DONT CHANGE
 	{
-
-		for(uint8_t i = 0; i < RR.no_of_process; i++)
+		for(uint8_t i = 0; i < RR.no_of_process; i++) // DONT CHANGE
 		{
 			// ensure no early arrival
-			if(RR.scheduler_tick >= RR.process[i]->arrival_time)
+			if(RR.scheduler_tick >= RR.process[i]->arrival_time) // DONT CHANGE
 			{
-				// ensure process does not exceed burst time
-				if(RR.process[i]->process_tick < RR.process[i]->burst_time)
+				// ensure process tick does not exceed burst time
+				if(RR.process[i]->process_tick < RR.process[i]->burst_time) // DONT CHANGE
 				{
-					// for processes whose burst time less than or equal to time quantum
-					if(RR.process[i]->burst_time <= RR.time_quantum)
+					// ensure process tick does not exceed time quantum
+					if(RR.process[i]->process_tick < RR.time_quantum)
 					{
-						// ensure process does not exceed time quantum
-						if(RR.process[i]->process_tick < RR.time_quantum)
-						{
-							RR.curr_process = i; // end result we want
-							RR.process[RR.curr_process]->process_tick ++;
-							break;
-						}
+						RR.curr_process = i; // end result we want
+						RR.process[i]->process_tick ++;
 
+						break;
 					}
-
-					// for processes whose burst time more than time quantum
-					else // if(RR.process[i]->burst_time > RR.time_quantum)
+					else
 					{
-						// ensure process does not exceed time quantum
-						if(RR.process[i]->process_tick < (RR.process[i]->burst_time - RR.time_quantum))
-						{
-							RR.curr_process = i; // end result we want
-							RR.process[RR.curr_process]->process_tick ++;
-							break;
-						}
-
+						// do something
 					}
-
 				}
-
-
 			}
-
 		}
-
-
 	}
 	else
 	{
 		// Reset scheduler tick to zero if equal or exceed scheduler total time
 		RR.scheduler_tick = 0;
+
+		// Reset scheduler current process to zero
+		RR.curr_process = 0;
 
 		// Reset processes tick to zero
 		for (uint8_t i = 0; i < RR.no_of_process; i++)
