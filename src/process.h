@@ -17,7 +17,7 @@ typedef struct PROCESS_t {
 	uint8_t arrival_time;
 	uint8_t burst_time;
 
-	uint8_t tick;
+	uint8_t process_tick;
 } PROCESS_t;
 
 
@@ -25,5 +25,7 @@ typedef struct PROCESS_t {
 void PROCESS_0(void);
 void PROCESS_1(void);
 void PROCESS_2(void);
+void PROCESS_3(void);
+void PROCESS_4(void);
 
 #endif /* SRC_PROCESS_H_ */

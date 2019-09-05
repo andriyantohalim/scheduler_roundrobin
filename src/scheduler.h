@@ -17,13 +17,13 @@
 
 typedef struct SCHEDULER_t {
 	uint8_t time_quantum;
+	uint8_t total_time;
 	uint8_t no_of_process;
 	PROCESS_t *process[MAX_PROCESS];
 
-	uint8_t total_time;
-
 	uint8_t curr_process;
-	uint8_t tick;
+
+	uint8_t scheduler_tick;
 } SCHEDULER_t;
 
 #endif /* SRC_SCHEDULER_H_ */

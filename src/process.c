@@ -22,3 +22,15 @@ void PROCESS_2(void)
 {
 	printf("Process 2 : Hello World\n");
 }
+
+void PROCESS_3(void)
+{
+	printf("Process 3 : Hello World\n");
+}
+
+
+void PROCESS_4(void)
+{
+	printf("Process 4 : Hello World\n");
+}
+
