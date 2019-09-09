@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef struct PROCESS_t {
 	void (*process_function)(void);
@@ -18,6 +19,7 @@ typedef struct PROCESS_t {
 	uint8_t burst_time;
 
 	uint8_t process_tick;
+	bool complete;
 } PROCESS_t;
 
 
